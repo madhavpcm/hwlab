@@ -1,0 +1,13 @@
+*
+!/**/
+!*.*
+.vscode/
+*core*
+*.pdf
+*.zip
+.cph/
+*.o
+*.ppt
+*.docx
+*.doc
+*.out
