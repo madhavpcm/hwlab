@@ -8,7 +8,7 @@ savg : db "Average: %d",10,0
 ssum : db "Sum: %d",10,0
 section .bss
 i : resd 1
-n : resw 1
+n : resd 1
 x : resd 1
 sum : resd 1
 avg : resd 1
@@ -35,6 +35,7 @@ main:
         movzx ebx, word[n]
         cmp dword[i] , ebx 
         jl loop_body
+        jmp loop_exit
     loop_body:
         mov rdi, fin
         mov rsi, x
@@ -48,7 +49,7 @@ main:
         mov dword[ebx],eax
         inc dword[i]
         jmp loop_condition
-    
+    loop_exit: 
     mov eax, dword[sum]
     mov ebx,0
     mov bx, word[n]
