@@ -1,17 +1,19 @@
 section .data
-
+newl : db 10
 section .bss
 newline : resb 1
 inp : resb 1
 num : resd 1
+pcount : resw 1
 section .text
 global _start
 
 _start:
     mov dword[num], 0
+    mov word[pcount], 0
     call read_int
     call print_int
-    call read_int 
+    call read_int
     call print_int
 exit:
     mov eax, 1
@@ -52,54 +54,55 @@ read_int_exit:
     pop rbp
     ret
 
+
 print_int:
+    mov word[pcount], 0
+    push rax 
+    push rbx 
+    push rcx 
+    push rdx 
+    push rdi
+    push rsi
     push rbp
     mov rbp, rsp
-
-    mov edx, 0
-    mov ebx, 0
-    mov bx, 10
-
-print_int_loop:
-    push rbp
-    mov rbp, rsp
-    sub rsp, 8
-    mov qword [rsp - 8] ,0
-    print_loop_begin:
-    cmp dword[num] , 0
-    jle print_int_exit
-    mov edx, 0
+    mov rdx,0
+push_int_to_stack:
+    cmp word[num], 0
+    je print_num
+    inc word[pcount]
+    mov edx, 0 
     mov eax, dword[num]
-    mov ebx,10
+    mov ebx, 10
     div ebx
+    push rdx
+    mov dword[num], eax
+    jmp push_int_to_stack
     
-    mov dword[num],eax
-
+print_num:
+    cmp word[pcount], 0
+    je print_int_end
+    dec word[pcount] 
+    pop rdx
     mov byte[inp], dl
     add byte[inp], 30h
-
-    movsx rax,byte[inp]
-    push rax
-    inc qword[rsp - 8]
-
-    jmp print_loop_begin 
-    
-print_int_exit:
-    cmp dword[rsp - 8] , 0
-    jle print_int_real_exit
-    dec dword[rsp - 8]
-    pop rax
-    mov byte[inp], al
-
     mov eax, 4
     mov ebx, 1
-    mov ecx, inp
+    mov ecx,inp
     mov edx, 1
     int 80h
+    jmp print_num
+print_int_end:
+    mov eax,4
+    mov ebx,1
+    mov ecx,newl
+    mov edx,1
+    int 80h
 
-    jmp print_int_exit
-print_int_real_exit:
-    add rsp, 8
     pop rbp
+    pop rsi
+    pop rdi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
     ret
-
