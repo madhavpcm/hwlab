@@ -106,3 +106,44 @@ print_int_end:
     pop rbx
     pop rax
     ret
+
+read_str:
+    mov rax, 3
+    mov rbx, 0
+    mov rcx, x 
+    mov rdx, 1
+    int 80h 
+    mov rdi, 0
+    cmp byte[x] , 10
+    je read_str_return 
+
+    mov al, byte[x]
+    mov rbx, rdi 
+    add rbx, rsi 
+    mov byte[rbx], al
+    inc rdi 
+    jmp read_str
+
+read_str_return:
+    mov rbx, rdi 
+    add rbx, rsi
+    mov byte[rbx],0
+    ret
+
+print_str:
+    mov rcx, 0
+print_str_l:
+    mov rax, rsi
+    add rax, rcx 
+    cmp byte[rax], 0
+    je print_str_int
+    inc rcx 
+    jmp print_str_l
+print_str_int:
+    mov rax, 4
+    mov rbx, 1
+    mov rdx, rcx
+    mov rcx, s
+    int 80h
+
+    ret
